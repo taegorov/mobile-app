@@ -1,21 +1,116 @@
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Button, Linking, FlatList } from 'react-native';
+import { Camera } from 'expo-camera';
+import * as Contacts from 'expo-contacts';
 
 export default function App() {
+  const [permission, setPermission] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [contacts, setContacts] = useState([]);
+
+
+  useEffect(() => {
+    const getContacts = async () => {
+      const { status } = await Contacts.requestPermissionsAsync();
+      if (status === 'granted') {
+        // fetch our contacts and set them to component "state"
+        let contactList = await Contacts.getContactsAsync();
+        setContacts(contactList.data);
+      }
+    }
+
+    getContacts();
+  }, []);
+
+
+  function call(person) {
+    const phoneNumber = person.phoneNumbers[0].digits;
+    const link = `tel:${phoneNumber}`;
+
+    console.log(link);
+    Linking.canOpenURL(link)
+      .then(supported => Linking.openURL(link))
+      .catch(console.error);
+  }
+
+
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestPermissionsAsync();
+      setPermission(status === 'granted');
+    })();
+  }, []);
+
+  if (permission === null) {
+    return <View />;
+  }
+  if (permission === false) {
+    return <Text>No access to camera</Text>;
+  }
+
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      <View style={styles.container}>
+        <StatusBar style="auto" />
+        <Button onPress={() => console.log('Ive been pressed')} title="Click Here!" />
+
+
+        <Text style={styles.topText}> You Look 👌 </Text>
+        <Camera style={styles.cam} type={type}>
+          <View style={styles.view}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                setType(
+                  type === Camera.Constants.Type.back
+                    ? Camera.Constants.Type.front
+                    : Camera.Constants.Type.back
+                );
+              }}>
+              <Text style={styles.text}> 🔁 </Text>
+            </TouchableOpacity>
+          </View>
+        </Camera>
+      </View>
+    </>
   );
 }
 
+
 const styles = StyleSheet.create({
+
   container: {
+    display: 'flex',
     flex: 1,
-    backgroundColor: '#fff',
+    borderWidth: 10,
+    borderColor: "#6997bf",
+    backgroundColor: '#6997bf',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  cam: {
+    width: '100%',
+    height: '50%',
+  },
+  button: {
+    height: 70,
+    width: 70,
+    backgroundColor: '#c4f7b0',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginLeft: '82%'
+
+  },
+  text: {
+    fontSize: 50,
+    flex: 2,
+    marginTop: '10%',
+  },
+  topText: {
+    fontSize: 30,
+    marginTop: '10%'
   },
 });
