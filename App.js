@@ -51,12 +51,27 @@ export default function App() {
   }
 
 
+
   return (
     <>
       <View style={styles.container}>
         <StatusBar style="auto" />
-        <Button onPress={() => console.log('Ive been pressed')} title="Click Here!" />
+        {/* <Button onPress={() => console.log('Ive been pressed')} title="Click Here!" /> */}
+        <Text style={styles.topText}> Want to Call Someone? </Text>
 
+        <FlatList
+          style={styles.list}
+          data={contacts}
+          // function for what to render given the value of he data Prop.
+          renderItem={({ item }) => item.name === undefined ? <Button style={styles.contact} title='undefined' onPress={() => console.log(item.name)} /> : <Button style={styles.contact} title={item.name} onPress={() => call(item)} />}
+
+          // key extractor is here for react to manage dynamic rendering of native components.
+          keyExtractor={item => item.id}
+
+
+        // key extractor is here for react to manage dynamic rendering of native components.
+
+        />
 
         <Text style={styles.topText}> You Look 👌 </Text>
         <Camera style={styles.cam} type={type}>
@@ -98,7 +113,7 @@ const styles = StyleSheet.create({
   button: {
     height: 70,
     width: 70,
-    backgroundColor: '#c4f7b0',
+    // backgroundColor: '#c4f7b0',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginLeft: '82%'
@@ -111,6 +126,19 @@ const styles = StyleSheet.create({
   },
   topText: {
     fontSize: 30,
-    marginTop: '10%'
+    marginTop: '10%',
+    color: 'white',
+  },
+  list: {
+    color: 'white',
+    maxHeight: '20%',
+    flex: 2,
+    borderColor: 'red',
+    borderWidth: 2,
+    backgroundColor: '#c4f7b0',
+  },
+  contact: {
+    color: 'white',
+    backgroundColor: 'grey',
   },
 });
