@@ -10,6 +10,10 @@ Step 3: Flip back and forth between front-facing and rear-facing camera
 
 Step 4: Continue your day with renewed confidence
 
+## How to Run on Your Simulator
+
+https://static.expo.dev/static/videos/simulator-build-artifact.mp4 
+
 
 ## Resources
 
